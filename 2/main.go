@@ -1,13 +1,11 @@
 package main
 
 import (
-	"bufio"
-	"flag"
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"strconv"
+
+	"github.com/BarthesSimpson/AdventOfCode2020/utils"
 )
 
 // PasswordRule contains the parameters for validating a password.
@@ -44,23 +42,12 @@ func (pr *PasswordRule) isValidPwdV2(pwd string) bool {
 }
 
 func main() {
-	part := flag.Int("part", 1, "part 1 or part 2")
-	flag.Parse()
-
-	if *part < 1 || *part > 2 {
-		log.Fatal("please specify -part=1 or -part=2")
-	}
-
-	if *part == 1 {
-		part1()
-	} else {
-		part2()
-	}
+	utils.RouteToPart(part1, part2)
 }
 
 func part1() {
 	count := 0
-	applyToEachLine("input.txt", func(line string) {
+	utils.ApplyToEachLine("2/input.txt", func(line string) {
 		rule, pwd := parseLine(line)
 		if rule.isValidPwdV1(pwd) {
 			count++
@@ -71,7 +58,7 @@ func part1() {
 
 func part2() {
 	count := 0
-	applyToEachLine("input.txt", func(line string) {
+	utils.ApplyToEachLine("2/input.txt", func(line string) {
 		rule, pwd := parseLine(line)
 		if rule.isValidPwdV2(pwd) {
 			count++
@@ -89,20 +76,4 @@ func parseLine(line string) (PasswordRule, string) {
 	letter := []rune(match[3])[0]
 	pwd := match[4]
 	return PasswordRule{min: min, max: max, letter: letter}, pwd
-}
-
-func applyToEachLine(filepath string, op func(string)) {
-	file, err := os.Open(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		op(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
 }
