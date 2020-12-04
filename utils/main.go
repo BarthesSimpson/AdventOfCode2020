@@ -3,8 +3,10 @@ package utils
 import (
 	"bufio"
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 // ApplyToEachLine applies the provided lambda to each line of the specified file
@@ -22,6 +24,16 @@ func ApplyToEachLine(filepath string, op func(string)) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// SplitFileBy reads the specified file into memory and splits it into a slice of strings
+// by the provided separator
+func SplitFileBy(filepath string, sep string) []string {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return strings.Split(string(file), sep)
 }
 
 // RouteToPart routes to the handler for Part1 (default) or Part2
